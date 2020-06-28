@@ -1,7 +1,7 @@
 {
-  "name": "canvas2-dots",
+  "name": "canvas-languges-chart",
   "version": "1.0.0",
-  "description": "Genetic algorithm for dots",
+  "description": "The programming languages popularity chart.",
   "type": "module",
   "private": true,
   "scripts": {
