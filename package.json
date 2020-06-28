@@ -1,0 +1,51 @@
+{
+  "name": "canvas2-dots",
+  "version": "1.0.0",
+  "description": "Genetic algorithm for dots",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "start": "webpack-dev-server --config webpack.config.dev.js",
+    "build": "webpack --config webpack.config.prod.js",
+    "clean:build": "rimraf ./dist && mkdir dist",
+    "prebuild": "run-p clean:build",
+    "serve": "http-server -a localhost -p 8000 -c-1 ./dist",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sebek78/canvas2-dots.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/sebek78/canvas2-dots/issues"
+  },
+  "homepage": "https://github.com/sebek78/canvas2-dots#readme",
+  "devDependencies": {
+    "@babel/cli": "^7.10.1",
+    "@babel/core": "^7.10.2",
+    "@babel/preset-env": "^7.10.2",
+    "autoprefixer": "^9.8.0",
+    "babel-eslint": "^10.1.0",
+    "babel-loader": "^8.1.0",
+    "css-loader": "^3.5.2",
+    "cssnano": "^4.1.10",
+    "eslint": "^6.8.0",
+    "eslint-loader": "^4.0.0",
+    "html-webpack-plugin": "^3.2.0",
+    "mini-css-extract-plugin": "^0.9.0",
+    "node-sass": "^4.13.1",
+    "npm-run-all": "^4.1.5",
+    "postcss-loader": "^3.0.0",
+    "prettier": "^2.0.4",
+    "rimraf": "^3.0.2",
+    "sass-loader": "^8.0.2",
+    "webpack": "^4.42.1",
+    "webpack-cli": "^3.3.11",
+    "webpack-dev-server": "^3.10.3"
+  },
+  "dependencies": {
+    "@babel/polyfill": "^7.10.1"
+  }
+}
