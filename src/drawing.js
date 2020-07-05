@@ -1,86 +1,42 @@
 import {
   WIDTH,
   HEIGHT,
-  MENU_HEIGHT,
   LANGUAGES,
+  BOTTOM_PADDING,
+  MAX_Y_CHART_VALUE,
+  TOP_PADDING,
   LEFT_PADDING,
-  RIGHT_PADDING,
+  X_UNIT,
 } from "./constants";
-import { scaleY, scaleX, getLanguageColor } from "./chartHelpers";
+import drawCanvas from "./views/drawCanvas";
+import drawChart from "./views/drawChart";
+import drawLegend from "./views/drawLegend";
 
-export const createCtx = () => {
-  const canvas = document.getElementById("canvas");
+const relativeY = (HEIGHT - TOP_PADDING - BOTTOM_PADDING) / MAX_Y_CHART_VALUE;
+
+export const scaleY = (value) =>
+  HEIGHT - BOTTOM_PADDING - Math.round(value * relativeY, 10);
+
+export const scaleX = (index) => Math.round(LEFT_PADDING + X_UNIT * index);
+
+export const getLanguageColor = (language) =>
+  LANGUAGES.find((lang) => lang.name === language).color;
+
+export const canvas = document.getElementById("canvas");
+
+const createCtx = () => {
   canvas.setAttribute("width", WIDTH);
   canvas.setAttribute("height", HEIGHT);
-  const ctx = canvas.getContext("2d");
-  ctx.font = "16px sans-serif";
-  ctx.textBaseline = "middle";
-  return ctx;
-};
-
-const clearCanvas = (ctx) => {
-  ctx.clearRect(0, 0, WIDTH, HEIGHT);
-};
-
-const drawMenu = (ctx) => {
-  ctx.fillStyle = "#212121";
-  ctx.fillRect(0, 0, WIDTH, MENU_HEIGHT);
-};
-
-const drawChartBackground = (ctx) => {
-  ctx.fillStyle = "black";
-  ctx.fillRect(0, MENU_HEIGHT, WIDTH, HEIGHT);
-};
-
-function drawFPS(ctx, fps) {
-  ctx.fillStyle = "lightblue";
-  ctx.fillText(`FPS: ${fps}`, 10, 16);
-}
-
-const drawYaxis = (ctx) => {
-  ctx.strokeStyle = "white";
-  ctx.lineWidth = 2;
-  ctx.beginPath();
-  ctx.moveTo(50, 50);
-  ctx.lineTo(50, HEIGHT - 50);
-  ctx.stroke();
-  ctx.closePath();
-};
-
-const drawChartLine = (ctx, value) => {
-  const y = scaleY(value);
-  ctx.fillStyle = "#555";
-  ctx.fillRect(LEFT_PADDING, y, WIDTH - RIGHT_PADDING - 150, 1);
-};
-
-const drawBackgoundLines = (ctx) => {
-  const values = [1, 2, 4, 8, 16];
-  values.forEach((value) => {
-    drawChartLine(ctx, value);
-  });
-};
-
-const drawXaxis = (ctx) => {
-  ctx.strokeStyle = "white";
-  ctx.lineWidth = 2;
-  ctx.beginPath();
-  ctx.moveTo(50, HEIGHT - 50);
-  ctx.lineTo(WIDTH - 50, HEIGHT - 50);
-  ctx.stroke();
-  ctx.closePath();
-};
-
-const drawPoint = (ctx, x, y, color) => {
-  ctx.fillStyle = color;
-  ctx.beginPath();
-  ctx.arc(x, y, 3, 0, Math.PI * 2, false);
-  ctx.fill();
-  ctx.closePath();
+  const context = canvas.getContext("2d");
+  context.font = "16px sans-serif";
+  context.textBaseline = "middle";
+  return context;
 };
 
 const drawLanguageLine = (ctx, x1, y1, x2, y2, color) => {
+  ctx.lineJoin = "round";
   ctx.strokeStyle = color;
-  ctx.lineWidth = 2;
+  ctx.lineWidth = 3;
   ctx.beginPath();
   ctx.moveTo(x1, y1);
   ctx.lineTo(x2, y2);
@@ -93,7 +49,6 @@ const drawLanguage = (ctx, language) => {
   language.forEach((record, i) => {
     const x1 = scaleX(i);
     const y1 = scaleY(record.value);
-    drawPoint(ctx, x1, y1, color);
     if (i > 0) {
       const x2 = scaleX(i - 1);
       const y2 = scaleY(language[i - 1].value);
@@ -102,32 +57,13 @@ const drawLanguage = (ctx, language) => {
   });
 };
 
-const drawLegendElement = (ctx, language, x, y) => {
-  ctx.fillStyle = language.color;
-  ctx.fillRect(x, y, 20, 20);
-  ctx.fillStyle = "white";
-  ctx.fillText(`${language.name}`, x + 30, y + 12);
-};
+const ctx = createCtx();
 
-const drawLegend = (ctx, LANGUAGES) => {
-  const startX = 500;
-  const startY = 50;
-  LANGUAGES.forEach((language, i) => {
-    const y = startY + i * 30;
-    drawLegendElement(ctx, language, startX, y);
-  });
-};
-
-export const drawing = (ctx, state, chartData) => {
-  clearCanvas(ctx);
-  drawMenu(ctx);
-  drawChartBackground(ctx);
-  drawFPS(ctx, state.fps);
-  drawYaxis(ctx);
-  drawXaxis(ctx);
-  drawBackgoundLines(ctx);
+export const drawing = (chartData, dates) => {
+  drawCanvas(ctx);
+  drawChart(ctx, dates);
   chartData.forEach((language) => {
     drawLanguage(ctx, language);
   });
-  drawLegend(ctx, LANGUAGES);
+  drawLegend(ctx, chartData);
 };

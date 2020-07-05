@@ -1,11 +1,12 @@
-import { MENU_HEIGHT } from "./constants";
+import { canvas } from "./drawing";
 
-export const handleEvent = ({ offsetX, offsetY }) => {
-  if (offsetY < MENU_HEIGHT) {
-    if (offsetX >= 100 && offsetX <= 150) {
-      return {
-        type: "RUN",
-      };
-    }
-  }
+const handleEvent = ({ offsetX, offsetY }, draw) => {
+  console.log("click", offsetX, offsetY);
+  window.requestAnimationFrame(draw);
 };
+
+const eventHandler = (data, draw) => {
+  canvas.addEventListener("click", (e) => handleEvent(e, draw), false);
+};
+
+export default eventHandler;

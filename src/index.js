@@ -1,25 +1,14 @@
 import "./styles.scss";
-// import { handleEvent } from "./eventHandler";
-import { processingState } from "./processingState";
-import { createCtx, drawing } from "./drawing";
-import { createState } from "./init.js";
-
-import { data } from "./data";
-import { parseData } from "./dataParsing";
+import { drawing } from "./drawing";
+import { data } from "./models/data";
+import { parseData } from "./models/dataParsing";
+import getDates from "./models/getDates";
+import eventHandler from "./eventHandler";
 
 (function () {
   const chartData = parseData(data);
-  const ctx = createCtx();
-
-  let state = createState();
-  let action = {};
-
-  const loop = () => {
-    state = processingState(state, action);
-    action = {};
-    drawing(ctx, state, chartData);
-    //window.requestAnimationFrame(loop);
-  };
-  //canvas.addEventListener("click", (e) => (action = handleEvent(e)), false);
-  window.requestAnimationFrame(loop);
+  const dates = getDates(data);
+  const draw = () => drawing(chartData, dates);
+  window.requestAnimationFrame(draw);
+  eventHandler(chartData, draw);
 })();

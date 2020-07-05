@@ -9,6 +9,7 @@ export const TOP_PADDING = 50;
 export const LEFT_PADDING = 50;
 export const RIGHT_PADDING = 50;
 export const MAX_Y_CHART_VALUE = 20; // in percent
+export const MAX_X_CHART_VALUE = 10; // time period
 export const X_UNIT = 50;
 
 export const LANGUAGES = [
