@@ -12,6 +12,12 @@ export const MAX_Y_CHART_VALUE = 20; // in percent
 export const MAX_X_CHART_VALUE = 10; // time period
 export const X_UNIT = 50;
 
+// legend
+export const LEGEND_X = 460;
+export const LEGEND_Y = 50;
+export const ROW_HEIGTH = 30;
+export const BOX_SIZE = 20;
+
 export const LANGUAGES = [
   { name: "C", color: "#035798" },
   { name: "Java", color: "#E71B23" },

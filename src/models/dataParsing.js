@@ -1,6 +1,8 @@
 import { LANGUAGES } from "../constants";
 import * as R from "ramda";
 
+/* chart data */
+
 const findChartPoint = (data, language) =>
   data.filter((record) => record.language === language.name);
 
@@ -25,9 +27,38 @@ const processMontlyData = (date, dataset) =>
 const buildChartPoints = (data) =>
   data.map(({ date, dataset }) => processMontlyData(date, dataset));
 
-const diff = (a, b) => a.date - b.date;
+const diffDate = (a, b) => a.date - b.date;
 
-const sortByDate = (data) => R.sort(diff, data).reverse();
+const sortByDate = (data) => R.sort(diffDate, data).reverse();
+
+const addVisibility = (data) =>
+  data.map((lang) => ({ ...lang, visibility: true }));
 
 export const parseData = (data) =>
-  R.pipe(sortByDate, buildChartPoints, oneArray, groupData)(data);
+  R.pipe(
+    sortByDate,
+    buildChartPoints,
+    oneArray,
+    addVisibility,
+    groupData
+  )(data);
+
+/* Legend */
+
+const getLastElement = (data) =>
+  data.map((language) => language[language.length - 1]);
+
+const diffValue = (a, b) => a.value - b.value;
+
+const sortByValue = (data) => R.sort(diffValue, data).reverse();
+
+const findColor = (language) =>
+  LANGUAGES.find((lang) => lang.name === language).color;
+
+const addColorInfo = (data) =>
+  data.map((rowData) => {
+    return { ...rowData, color: findColor(rowData.language) };
+  });
+
+export const parseLegendData = (chartData) =>
+  R.pipe(getLastElement, sortByValue, addColorInfo)(chartData);

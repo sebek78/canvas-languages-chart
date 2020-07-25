@@ -59,11 +59,11 @@ const drawLanguage = (ctx, language) => {
 
 const ctx = createCtx();
 
-export const drawing = (chartData, dates) => {
+export const drawing = (chartData, dates, legendData) => {
   drawCanvas(ctx);
   drawChart(ctx, dates);
   chartData.forEach((language) => {
-    drawLanguage(ctx, language);
+    if (language[0].visibility) drawLanguage(ctx, language);
   });
-  drawLegend(ctx, chartData);
+  drawLegend(ctx, legendData);
 };
