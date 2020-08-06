@@ -12,7 +12,7 @@ const drawLegendElement = (
     ctx.fillStyle = "black";
     ctx.fillRect(x + 2, y + 2, BOX_SIZE - 4, BOX_SIZE - 4);
   }
-  ctx.fillStyle = "white";
+  ctx.fillStyle = visibility ? "white" : "#AAA";
   ctx.fillText(`${language} ${value.toFixed(2)} %`, x + 30, y + 12);
 };
 

@@ -2,7 +2,6 @@
   "name": "canvas-languges-chart",
   "version": "1.0.0",
   "description": "The programming languages popularity chart.",
-  "type": "module",
   "private": true,
   "scripts": {
     "start": "webpack-dev-server --config webpack.config.dev.js",

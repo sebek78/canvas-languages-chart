@@ -1,15 +1,12 @@
 import "./styles.scss";
-import { drawing } from "./drawing";
 import { data } from "./models/data";
-import { parseData, parseLegendData } from "./models/dataParsing";
-import getDates from "./models/getDates";
+import { parseChartData } from "./models/dataParsing";
+import { createView } from './drawing';
 import eventHandler from "./eventHandler";
 
 (function () {
-  const chartData = parseData(data);
-  const dates = getDates(data);
-  const legendData = parseLegendData(chartData);
-  const draw = () => drawing(chartData, dates, legendData);
+  const chartData = parseChartData(data);
+  const { draw } = createView(chartData);
   window.requestAnimationFrame(draw);
-  eventHandler(chartData, legendData, draw);
+  eventHandler(chartData, draw);
 })();

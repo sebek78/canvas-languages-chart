@@ -60,5 +60,30 @@ const addColorInfo = (data) =>
     return { ...rowData, color: findColor(rowData.language) };
   });
 
+const getDates = (data) =>
+  data
+    .map((monthlyData) => ({
+      month: Number.parseInt(monthlyData.date.split("-")[1], 10),
+      year: Number.parseInt(monthlyData.date.split("-")[0], 10),
+    }))
+    .reverse();
+
 export const parseLegendData = (chartData) =>
   R.pipe(getLastElement, sortByValue, addColorInfo)(chartData);
+
+const findMaxValue = (chartData) =>
+  Math.ceil(Math.max(...chartData.map(langData => langData.map(lang => lang.visibility ? lang.value : 0)).flat()));
+
+export const parseChartData = (data) => {
+  const chartData = parseData(data);
+  const dates = getDates(data);
+  const legendData = parseLegendData(chartData);
+  let maxY = findMaxValue(chartData);
+  return {
+    getMaxY: () => maxY,
+    setMaxY: () => { maxY = findMaxValue(chartData); },
+    getChartData: () => chartData,
+    getDates: () => dates,
+    getLegendData: () => legendData,
+  }
+}

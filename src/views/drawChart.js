@@ -5,13 +5,12 @@ import {
   RIGHT_PADDING,
   TOP_PADDING,
   BOTTOM_PADDING,
-  MAX_Y_CHART_VALUE,
   MAX_X_CHART_VALUE,
 } from "../constants";
 import { scaleY, scaleX } from "../drawing";
 
-const TICK_LENGTH = 7;
-const CHART_VALUES = [1, 2, 4, 8, 16];
+const TICK_LENGTH = 9;
+const CHART_VALUES = [1, 2, 4, 8, 16, 32];
 
 /* Y axis */
 
@@ -24,26 +23,27 @@ const drawYaxis = (ctx) => {
   );
 };
 
-const drawTickY = (ctx, y) => {
+const drawTickY = (ctx, y, maxY) => {
   ctx.fillRect(
     LEFT_PADDING - Math.floor(TICK_LENGTH / 2),
-    scaleY(y),
+    scaleY(y, maxY),
     TICK_LENGTH,
     1
   );
 };
 
-const drawYticks = (ctx) => {
-  for (let y = 1; y <= MAX_Y_CHART_VALUE; y++) {
-    drawTickY(ctx, y);
+const drawYticks = (ctx, maxY) => {
+  for (let y = 1; y <= maxY; y++) {
+    drawTickY(ctx, y, maxY);
   }
 };
 
-function drawYvalues(ctx) {
+function drawYvalues(ctx, maxY) {
   ctx.textAlign = "right";
-  CHART_VALUES.forEach((value) =>
-    ctx.fillText(`${value} %`, LEFT_PADDING - 10, scaleY(value) + 2)
-  );
+  CHART_VALUES.forEach((value) => {
+    if (value < maxY) ctx.fillText(`${value} %`, LEFT_PADDING - 10, scaleY(value, maxY) + 2)
+  });
+  ctx.fillText(`${maxY} %`, LEFT_PADDING - 10, scaleY(maxY, maxY) + 2)
 }
 
 /* X axis */
@@ -82,26 +82,26 @@ const drawXValues = (ctx, dates) => {
 
 /* Background lines */
 
-const drawChartBackgroundLine = (ctx, value) => {
-  ctx.fillRect(LEFT_PADDING, scaleY(value), WIDTH - RIGHT_PADDING - 200, 1);
+const drawChartBackgroundLine = (ctx, value, maxY) => {
+  ctx.fillRect(LEFT_PADDING, scaleY(value, maxY), WIDTH - RIGHT_PADDING - 200, 1);
 };
 
-const drawBackgoundLines = (ctx) => {
+const drawBackgoundLines = (ctx, maxY) => {
   CHART_VALUES.forEach((value) => {
-    drawChartBackgroundLine(ctx, value);
+    if (value <= maxY) drawChartBackgroundLine(ctx, value, maxY);
   });
 };
 
-const drawChart = (ctx, dates) => {
+const drawChart = (ctx, dates, maxY) => {
   ctx.fillStyle = "white";
   drawYaxis(ctx);
-  drawYticks(ctx);
-  drawYvalues(ctx);
+  drawYticks(ctx, maxY);
+  drawYvalues(ctx, maxY);
   drawXaxis(ctx);
   drawXticks(ctx);
   drawXValues(ctx, dates);
   ctx.fillStyle = "#555";
-  drawBackgoundLines(ctx);
+  drawBackgoundLines(ctx, maxY);
 };
 
 export default drawChart;

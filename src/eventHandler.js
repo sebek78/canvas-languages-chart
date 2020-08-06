@@ -19,7 +19,7 @@ const toggleInLegendVisibility = (lang) => ({
 const toggleVisibility = (langData) =>
   langData.map((lang) => ({ ...lang, visibility: !lang.visibility }));
 
-const handleLegendClick = (x, y, chartData, legendData) => {
+const handleLegendClick = (x, y, chartData, legendData, setMaxY) => {
   const rows = chartData.length;
   const selectedRow = checkRowLegend(x, y, rows);
   if (selectedRow !== null) {
@@ -27,18 +27,19 @@ const handleLegendClick = (x, y, chartData, legendData) => {
     const { language } = legendData[selectedRow];
     const index = chartData.findIndex((lang) => lang[0].language === language);
     chartData[index] = toggleVisibility(chartData[index]);
+    setMaxY();
   }
 };
 
-const handleEvent = ({ offsetX, offsetY }, chartData, legendData, draw) => {
-  handleLegendClick(offsetX, offsetY, chartData, legendData);
+const handleEvent = ({ offsetX, offsetY }, chartData, legendData, setMaxY, draw) => {
+  handleLegendClick(offsetX, offsetY, chartData, legendData, setMaxY);
   window.requestAnimationFrame(draw);
 };
 
-const eventHandler = (chartData, legendData, draw) => {
+const eventHandler = ({ getChartData, getLegendData, setMaxY }, draw) => {
   canvas.addEventListener(
     "click",
-    (e) => handleEvent(e, chartData, legendData, draw),
+    (e) => handleEvent(e, getChartData(), getLegendData(), setMaxY, draw),
     false
   );
 };
