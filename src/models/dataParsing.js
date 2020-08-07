@@ -1,66 +1,52 @@
 import { LANGUAGES } from "../constants";
+import { Maybe } from "./wrapper";
 import * as R from "ramda";
 
 /* chart data */
+const diffDate = (a, b) => a.date - b.date;
+const sortByDateFn = (data) => R.sort(diffDate, data).reverse();
+
+const appendDate = (monthlyData, date) =>
+  monthlyData.map((lang) => `${lang},${Date.parse(date)}`);
+const appendDatesToRecordFn = (data) =>
+  data.valueOf().map(({ dataset, date }) => appendDate(dataset, date));
+
+const oneArrayFn = (data) => data.valueOf().flat();
+
+const parseRecordFn = (data) =>
+  data.valueOf().map((record) => {
+    const splitted = record.split(",");
+    return {
+      language: splitted[0],
+      position: parseInt(splitted[1], 10),
+      value: parseFloat(splitted[2]),
+      date: parseInt(splitted[3], 10),
+      visibility: true,
+    };
+  });
 
 const findChartPoint = (data, language) =>
   data.filter((record) => record.language === language.name);
+const groupDataFn = (data) =>
+  LANGUAGES.map((language) => findChartPoint(data.valueOf(), language));
 
-const groupData = (data) =>
-  LANGUAGES.map((language) => findChartPoint(data, language));
+const groupData = (data) => Maybe.of(data).map(groupDataFn);
+const parseRecord = (data) => Maybe.of(data).map(parseRecordFn);
+const oneArray = (data) => Maybe.of(data).map(oneArrayFn);
+const appendDatesToRecord = (data) => Maybe.of(data).map(appendDatesToRecordFn);
+const sortByDate = (data) => Maybe.of(data).map(sortByDateFn);
 
-const oneArray = (data) => data.flat();
-
-const parseRecord = (strRecord, date) => {
-  const splitted = strRecord.split(",");
-  return {
-    date: Date.parse(date),
-    language: splitted[0],
-    position: Number.parseInt(splitted[1], 10),
-    value: Number.parseFloat(splitted[2]),
-  };
-};
-
-const processMontlyData = (date, dataset) =>
-  dataset.map((strRecord) => parseRecord(strRecord, date));
-
-const buildChartPoints = (data) =>
-  data.map(({ date, dataset }) => processMontlyData(date, dataset));
-
-const diffDate = (a, b) => a.date - b.date;
-
-const sortByDate = (data) => R.sort(diffDate, data).reverse();
-
-const addVisibility = (data) =>
-  data.map((lang) => ({ ...lang, visibility: true }));
-
-export const parseData = (data) =>
-  R.pipe(
-    sortByDate,
-    buildChartPoints,
+const parseChartData = (data) =>
+  R.compose(
+    groupData,
+    parseRecord,
     oneArray,
-    addVisibility,
-    groupData
+    appendDatesToRecord,
+    sortByDate
   )(data);
 
-/* Legend */
-
-const getLastElement = (data) =>
-  data.map((language) => language[language.length - 1]);
-
-const diffValue = (a, b) => a.value - b.value;
-
-const sortByValue = (data) => R.sort(diffValue, data).reverse();
-
-const findColor = (language) =>
-  LANGUAGES.find((lang) => lang.name === language).color;
-
-const addColorInfo = (data) =>
-  data.map((rowData) => {
-    return { ...rowData, color: findColor(rowData.language) };
-  });
-
-const getDates = (data) =>
+/* Dates */
+const getDatesFn = (data) =>
   data
     .map((monthlyData) => ({
       month: Number.parseInt(monthlyData.date.split("-")[1], 10),
@@ -68,22 +54,60 @@ const getDates = (data) =>
     }))
     .reverse();
 
-export const parseLegendData = (chartData) =>
-  R.pipe(getLastElement, sortByValue, addColorInfo)(chartData);
+const getDates = (data) => Maybe.of(data).map(getDatesFn);
 
-const findMaxValue = (chartData) =>
-  Math.ceil(Math.max(...chartData.map(langData => langData.map(lang => lang.visibility ? lang.value : 0)).flat()));
+/* Legend */
+const getLastElementFn = (data) =>
+  data.valueOf().map((language) => language[language.length - 1]);
 
-export const parseChartData = (data) => {
-  const chartData = parseData(data);
-  const dates = getDates(data);
+const diffValue = (a, b) => a.value - b.value;
+const sortByValueFn = (data) => R.sort(diffValue, data.valueOf()).reverse();
+
+const findColor = (language) =>
+  LANGUAGES.find((lang) => lang.name === language).color;
+
+const addColorInfoFn = (data) =>
+  data.valueOf().map((rowData) => {
+    return { ...rowData, color: findColor(rowData.language) };
+  });
+
+const getLastElement = (data) => Maybe.of(data).map(getLastElementFn);
+const sortByValue = (data) => Maybe.of(data).map(sortByValueFn);
+const addColorInfo = (data) => Maybe.of(data).map(addColorInfoFn);
+
+const parseLegendData = (chartData) =>
+  R.compose(addColorInfo, sortByValue, getLastElement)(chartData);
+
+/* Max Y */
+const findMaxValueFn = (chartData) =>
+  Math.ceil(
+    Math.max(
+      ...chartData
+        .valueOf()
+        .map((langData) =>
+          langData.map((lang) => (lang.visibility ? lang.value : 0))
+        )
+        .flat()
+    )
+  );
+
+const findMaxValue = (chartData) => Maybe.of(chartData).map(findMaxValueFn);
+
+const getValue = (wrapper, defaultValue = []) =>
+  wrapper.type === "nothing" ? defaultValue : wrapper.valueOf();
+
+export const parseData = (data) => {
+  let chartData = parseChartData(data);
+  const chartDates = getDates(data);
   const legendData = parseLegendData(chartData);
   let maxY = findMaxValue(chartData);
   return {
-    getMaxY: () => maxY,
-    setMaxY: () => { maxY = findMaxValue(chartData); },
-    getChartData: () => chartData,
-    getDates: () => dates,
-    getLegendData: () => legendData,
-  }
-}
+    getMaxY: () => getValue(maxY, 1),
+    setMaxY: () => {
+      maxY = Maybe.of(chartData).map(findMaxValue);
+    },
+    getChartData: () => getValue(chartData),
+    getDates: () => getValue(chartDates),
+    getLegendData: () => getValue(legendData),
+  };
+};

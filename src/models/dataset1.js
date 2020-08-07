@@ -1,4 +1,4 @@
-export const data = [
+export const dataset1 = [
   {
     date: "2020-08",
     dataset: [
