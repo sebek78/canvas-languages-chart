@@ -79,33 +79,37 @@ const parseLegendData = (chartData) =>
   R.compose(addColorInfo, sortByValue, getLastElement)(chartData);
 
 /* Max Y */
-const findMaxValueFn = (chartData) =>
-  Math.ceil(
-    Math.max(
-      ...chartData
-        .valueOf()
-        .map((langData) =>
-          langData.map((lang) => (lang.visibility ? lang.value : 0))
-        )
-        .flat()
-    )
-  );
 
-const findMaxValue = (chartData) => Maybe.of(chartData).map(findMaxValueFn);
+const findMaxAndCeilFn = (selectedLanguages) =>
+  Math.ceil(Math.max(...selectedLanguages.valueOf()));
+const selectVisible = (lang) => (lang.visibility ? lang.value : 0);
+const getVisibleLanguagesFn = (chartData) =>
+  chartData.valueOf().map(selectVisible);
 
-const getValue = (wrapper, defaultValue = []) =>
-  wrapper.type === "nothing" ? defaultValue : wrapper.valueOf();
+const getVisibleLanguages = (chartData) =>
+  Maybe.of(chartData).map(getVisibleLanguagesFn);
+const findMaxAndCeil = (selectedLanguages) =>
+  Maybe.of(selectedLanguages).map(findMaxAndCeilFn);
+
+const findMaxValue = (chartData) =>
+  R.compose(findMaxAndCeil, getVisibleLanguages, oneArray)(chartData);
 
 export const parseData = (data) => {
   let chartData = parseChartData(data);
   const chartDates = getDates(data);
   const legendData = parseLegendData(chartData);
   let maxY = findMaxValue(chartData);
+
+  const getValue = (wrapper, defaultValue = []) =>
+    wrapper.type === "nothing" ? defaultValue : wrapper.valueOf();
+
+  const setNewMaxValue = (chartData) => {
+    maxY = Maybe.of(chartData).map(findMaxValue).valueOf();
+  };
+
   return {
     getMaxY: () => getValue(maxY, 1),
-    setMaxY: () => {
-      maxY = Maybe.of(chartData).map(findMaxValue);
-    },
+    setMaxY: () => setNewMaxValue(chartData),
     getChartData: () => getValue(chartData),
     getDates: () => getValue(chartDates),
     getLegendData: () => getValue(legendData),
