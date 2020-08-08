@@ -52,5 +52,10 @@ a {
   display: flex;
   margin: 0 auto;
   width: 640px;
+  border: 1px solid black;
   justify-content: space-evenly;
+  background-color: black;
+  color: white;
+  font-size: 16px;
+  padding: 4px 0;
 }

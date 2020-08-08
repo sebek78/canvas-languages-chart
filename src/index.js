@@ -1,25 +1,12 @@
 import "./styles.scss";
-import { handleEvent } from "./eventHandler";
-import { processingState } from "./processingState";
-import drawing from "./drawing";
-import { createState } from "./init.js";
+import { dataset1 } from "./models/dataset1";
+import { parseData } from "./models/dataParsing";
+import { createView } from "./drawing";
+import eventHandler from "./eventHandler";
 
 (function () {
-  const canvas = document.getElementById("canvas");
-  const ctx = canvas.getContext("2d");
-  ctx.font = "16px sans-serif";
-  ctx.textBaseline = "middle";
-
-  let state = createState();
-  let action = {};
-
-  const loop = () => {
-    state = processingState(state, action);
-    action = {};
-    drawing(ctx, state);
-    window.requestAnimationFrame(loop);
-  };
-
-  canvas.addEventListener("click", (e) => (action = handleEvent(e)), false);
-  window.requestAnimationFrame(loop);
+  const chartData = parseData(dataset1);
+  const { draw } = createView(chartData);
+  window.requestAnimationFrame(draw);
+  eventHandler(chartData, draw);
 })();
