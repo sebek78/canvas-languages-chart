@@ -2,20 +2,30 @@
 export const WIDTH = 640;
 export const HEIGHT = 600;
 export const MENU_HEIGHT = 30;
+export const LEGEND_MAX_WIDTH = 300;
+export const CHART_MAX_WIDTH = 800;
+export const CHART_MAX_HEIGHT = 700;
 
 // chart
 export const BOTTOM_PADDING = 50;
-export const TOP_PADDING = 50;
+export const TOP_PADDING = 20;
 export const LEFT_PADDING = 50;
-export const RIGHT_PADDING = 50;
-export const MAX_X_CHART_VALUE = 10; // time period
-export const X_UNIT = 50;
+export const RIGHT_PADDING = 20;
 
 // legend
-export const LEGEND_X = 460;
-export const LEGEND_Y = 50;
+export const LEGEND_X = 0;
+export const LEGEND_Y = 150;
 export const ROW_HEIGTH = 30;
 export const BOX_SIZE = 20;
+export const BUTTON_WIDTH = 50;
+export const LEGEND_BOTTOM_PADDING = 30;
+
+export const VIEW_NAMES = {
+  searchingValues: "seraching-values",
+  searchingDuels: "searching-duels",
+  usageValues: "usage-values",
+  usageDuels: "usage-duels",
+};
 
 export const LANGUAGES = [
   { name: "C", color: "#035798" },

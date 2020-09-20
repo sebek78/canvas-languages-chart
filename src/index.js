@@ -6,7 +6,7 @@ import eventHandler from "./eventHandler";
 
 (function () {
   const chartData = parseData(dataset1);
-  const { draw } = createView(chartData);
-  window.requestAnimationFrame(draw);
-  eventHandler(chartData, draw);
+  const View = createView(chartData);
+  window.requestAnimationFrame(View.draw);
+  eventHandler(chartData, View);
 })();

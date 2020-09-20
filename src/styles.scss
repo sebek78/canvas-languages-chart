@@ -1,5 +1,5 @@
 body {
-  background-color: #aeaeae;
+  background-color: black;
   margin: 0;
   padding: 0;
   font-family: Arial, Helvetica, sans-serif;
@@ -11,6 +11,20 @@ header {
   text-align: center;
   padding: 10px 0;
   box-sizing: border-box;
+}
+
+figure {
+  margin: 0;
+}
+
+.description {
+  display: block;
+  text-align: center;
+  width: 100vw;
+  background-color: black;
+  color: white;
+  font-size: 16px;
+  padding: 4px 0;
 }
 
 a {
@@ -42,20 +56,15 @@ a {
   }
 }
 
-#canvas {
-  border: 1px solid black;
+#canvas1,
+#canvas2 {
   display: block;
-  margin: 0px auto;
 }
 
-.description {
+.chartWrapper {
+  margin: 0;
   display: flex;
-  margin: 0 auto;
-  width: 640px;
-  border: 1px solid black;
-  justify-content: space-evenly;
-  background-color: black;
-  color: white;
-  font-size: 16px;
-  padding: 4px 0;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
 }

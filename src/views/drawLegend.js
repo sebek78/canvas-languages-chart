@@ -1,4 +1,5 @@
-import { LEGEND_X, LEGEND_Y, ROW_HEIGTH, BOX_SIZE } from "../constants";
+import { ROW_HEIGTH, BOX_SIZE, LEGEND_Y, VIEW_NAMES } from "../constants";
+import { setTextContext } from "./../drawing";
 
 const drawLegendElement = (
   ctx,
@@ -16,10 +17,34 @@ const drawLegendElement = (
   ctx.fillText(`${language} ${value.toFixed(2)} %`, x + 30, y + 12);
 };
 
-const drawLegend = (ctx, chartData) => {
+const setLightColor = (match) => (match ? "lime" : "#AAA");
+
+const drawLegendMenu = (ctx, viewName) => {
+  setTextContext(ctx);
+  ctx.fillStyle = "white";
+  ctx.fillText("Searching popularity", 0, 16);
+
+  ctx.fillStyle = setLightColor(viewName === VIEW_NAMES.searchingValues);
+  ctx.fillText("Values", 10, 46);
+
+  ctx.fillStyle = setLightColor(viewName === VIEW_NAMES.searchingDuels);
+  ctx.fillText("Duels", 90, 46);
+
+  ctx.fillStyle = "white";
+  ctx.fillText("Usage", 50, 76);
+
+  ctx.fillStyle = setLightColor(viewName === VIEW_NAMES.usageValues);
+  ctx.fillText("Values", 10, 106);
+
+  ctx.fillStyle = setLightColor(viewName === VIEW_NAMES.usageDuels);
+  ctx.fillText("Duels", 90, 106);
+};
+
+const drawLegend = (ctx, chartData, viewName) => {
+  drawLegendMenu(ctx, viewName);
   ctx.textAlign = "left";
   chartData.forEach((languageData, i) => {
-    drawLegendElement(ctx, languageData, LEGEND_X, LEGEND_Y + i * ROW_HEIGTH);
+    drawLegendElement(ctx, languageData, 0, LEGEND_Y + i * ROW_HEIGTH);
   });
 };
 
