@@ -1,5 +1,12 @@
-import { canvas } from "./drawing";
-import { LEGEND_Y, LEGEND_X, ROW_HEIGTH, BOX_SIZE } from "./constants";
+import { canvas2, setCanvasSize } from "./drawing";
+
+import {
+  LEGEND_Y,
+  LEGEND_X,
+  ROW_HEIGTH,
+  BOX_SIZE,
+  VIEW_NAMES,
+} from "./constants";
 
 const checkRowLegend = (x, y, rows) => {
   let row = null;
@@ -31,17 +38,52 @@ const handleLegendClick = (x, y, chartData, legendData, setMaxY) => {
   }
 };
 
-const handleEvent = ({ offsetX, offsetY }, chartData, legendData, setMaxY, draw) => {
-  handleLegendClick(offsetX, offsetY, chartData, legendData, setMaxY);
+const handleLegendMenuClick = (x, y, setView) => {
+  if (x > 0 && x < 70 && y > 35 && y < 55) {
+    setView(VIEW_NAMES.searchingValues);
+  } else if (x > 90 && x < 160 && y > 35 && y < 55) {
+    setView(VIEW_NAMES.searchingDuels);
+  } else if (x > 0 && x < 70 && y > 95 && y < 115) {
+    setView(VIEW_NAMES.usageValues);
+  } else if (x > 90 && x < 160 && y > 95 && y < 115) {
+    setView(VIEW_NAMES.usageDuels);
+  }
+};
+
+const handleEvent = (
+  { offsetX, offsetY },
+  chartData,
+  legendData,
+  setMaxY,
+  draw,
+  setView
+) => {
+  if (offsetY < LEGEND_Y) {
+    handleLegendMenuClick(offsetX, offsetY, setView);
+  } else {
+    handleLegendClick(offsetX, offsetY, chartData, legendData, setMaxY);
+  }
   window.requestAnimationFrame(draw);
 };
 
-const eventHandler = ({ getChartData, getLegendData, setMaxY }, draw) => {
-  canvas.addEventListener(
+const eventHandler = (
+  { getChartData, getLegendData, setMaxY },
+  { draw, setView }
+) => {
+  canvas2.addEventListener(
     "click",
-    (e) => handleEvent(e, getChartData(), getLegendData(), setMaxY, draw),
+    (e) =>
+      handleEvent(e, getChartData(), getLegendData(), setMaxY, draw, setView),
     false
   );
+  window.addEventListener("orientationchange", function () {
+    setCanvasSize();
+    draw();
+  });
+  window.addEventListener("resize", function () {
+    setCanvasSize();
+    draw();
+  });
 };
 
 export default eventHandler;
