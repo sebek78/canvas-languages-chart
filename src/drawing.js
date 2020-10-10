@@ -88,20 +88,26 @@ export const setCanvasSize = (legendHeight) => {
 
 let [ctx1, ctx2] = createCtx();
 
-export const drawing = (chartData, dates, legendData, maxY, viewName) => {
-  drawCanvas(ctx1);
-  drawCanvas(ctx2);
-  drawChart(ctx1, dates, maxY);
-  drawLanguageLines(ctx1, chartData, maxY);
-  drawLegend(ctx2, legendData, viewName);
-};
-
-export const createView = ({
+export const drawing = (
   getChartData,
   getDates,
   getLegendData,
   getMaxY,
-}) => {
+  viewName,
+  duels,
+  getMinMaxTime
+) => {
+  drawCanvas(ctx1);
+  drawCanvas(ctx2);
+  drawChart(ctx1, getDates(), getMaxY(), getMinMaxTime());
+  drawLanguageLines(ctx1, getChartData(), getMaxY(), getMinMaxTime());
+  drawLegend(ctx2, getLegendData(), viewName, duels);
+};
+
+export const createView = (
+  { getChartData, getDates, getLegendData, getMaxY, getMinMaxTime },
+  duels
+) => {
   let viewName = VIEW_NAMES.searchingValues;
   let legendHeight =
     LEGEND_Y + ROW_HEIGTH * getLegendData().length + LEGEND_BOTTOM_PADDING;
@@ -109,7 +115,15 @@ export const createView = ({
 
   return {
     draw: () =>
-      drawing(getChartData(), getDates(), getLegendData(), getMaxY(), viewName),
+      drawing(
+        getChartData,
+        getDates,
+        getLegendData,
+        getMaxY,
+        viewName,
+        duels,
+        getMinMaxTime
+      ),
     view: () => viewName,
     setView: (newName) => {
       viewName = newName;

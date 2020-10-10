@@ -27,8 +27,11 @@ const parseRecordFn = (data) =>
 
 const findChartPoint = (data, language) =>
   data.filter((record) => record.language === language.name);
+
 const groupDataFn = (data) =>
-  LANGUAGES.map((language) => findChartPoint(data.valueOf(), language));
+  LANGUAGES.map((language) => findChartPoint(data.valueOf(), language)).filter(
+    (element) => element.length
+  );
 
 const groupData = (data) => Maybe.of(data).map(groupDataFn);
 const parseRecord = (data) => Maybe.of(data).map(parseRecordFn);
@@ -67,9 +70,10 @@ const findColor = (language) =>
   LANGUAGES.find((lang) => lang.name === language).color;
 
 const addColorInfoFn = (data) =>
-  data.valueOf().map((rowData) => {
-    return { ...rowData, color: findColor(rowData.language) };
-  });
+  data
+    .valueOf()
+    .filter((record) => !R.isNil(record))
+    .map((rowData) => ({ ...rowData, color: findColor(rowData.language) }));
 
 const getLastElement = (data) => Maybe.of(data).map(getLastElementFn);
 const sortByValue = (data) => Maybe.of(data).map(sortByValueFn);
@@ -94,6 +98,8 @@ const findMaxAndCeil = (selectedLanguages) =>
 const findMaxValue = (chartData) =>
   R.compose(findMaxAndCeil, getVisibleLanguages, oneArray)(chartData);
 
+export const countIndex = (tx, t0, dt) => Math.round((tx - t0) / dt);
+
 export const parseData = (data) => {
   let chartData = parseChartData(data);
   const chartDates = getDates(data);
@@ -107,11 +113,28 @@ export const parseData = (data) => {
     maxY = Maybe.of(chartData).map(findMaxValue).valueOf();
   };
 
+  const getMinMaxTime = (chartData) => {
+    let minTime = chartData[0][0].date;
+    let maxTime = chartData[0][0].date;
+    const dt = 30 * 24 * 60 * 60 * 1000;
+
+    chartData.forEach((langData) => {
+      langData.forEach((record) => {
+        if (record.date < minTime) minTime = record.date;
+        if (record.date > maxTime) maxTime = record.date;
+      });
+    });
+
+    const maxX = countIndex(maxTime, minTime, dt) + 1;
+    return { minTime, maxX, dt };
+  };
+
   return {
     getMaxY: () => getValue(maxY, 1),
     setMaxY: () => setNewMaxValue(chartData),
     getChartData: () => getValue(chartData),
     getDates: () => getValue(chartDates),
     getLegendData: () => getValue(legendData),
+    getMinMaxTime: () => getMinMaxTime(getValue(chartData)),
   };
 };

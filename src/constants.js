@@ -40,4 +40,5 @@ export const LANGUAGES = [
   { name: "Go", color: "#79C5D9" },
   { name: "Rust", color: "#DE3515" },
   { name: "Dart", color: "#00CCB3" },
+  { name: "Kotlin", color: "#f1850b" },
 ];

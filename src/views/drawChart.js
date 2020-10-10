@@ -108,13 +108,13 @@ const drawBackgoundLines = (ctx, maxY) => {
   });
 };
 
-const drawChart = (ctx, dates, maxY) => {
+const drawChart = (ctx, dates, maxY, { maxX }) => {
   ctx.fillStyle = "white";
   drawYaxis(ctx);
   drawYticks(ctx, maxY);
   drawYvalues(ctx, maxY);
   drawXaxis(ctx);
-  drawXticks(ctx, dates.length);
+  drawXticks(ctx, maxX);
   drawXValues(ctx, dates);
   ctx.fillStyle = "#555";
   drawBackgoundLines(ctx, maxY);

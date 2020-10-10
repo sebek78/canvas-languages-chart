@@ -1,6 +1,8 @@
 import { ROW_HEIGTH, BOX_SIZE, LEGEND_Y, VIEW_NAMES } from "../constants";
 import { setTextContext } from "./../drawing";
 
+/*  Legend */
+
 const drawLegendElement = (
   ctx,
   { language, color, value, visibility },
@@ -40,12 +42,32 @@ const drawLegendMenu = (ctx, viewName) => {
   ctx.fillText("Duels", 90, 106);
 };
 
-const drawLegend = (ctx, chartData, viewName) => {
+/* Duels */
+
+const drawDuelElement = (ctx, { visibility, languages }, x, y) => {
+  ctx.fillStyle = visibility ? "white" : "#AAA";
+  ctx.fillRect(x, y, BOX_SIZE, BOX_SIZE);
+  if (!visibility) {
+    ctx.fillStyle = "black";
+    ctx.fillRect(x + 2, y + 2, BOX_SIZE - 4, BOX_SIZE - 4);
+  }
+  ctx.fillStyle = visibility ? "white" : "#AAA";
+  const description = languages.join(" vs ");
+  ctx.fillText(`${description}`, x + 30, y + 12);
+};
+
+const drawLegend = (ctx, chartData, viewName, duels) => {
   drawLegendMenu(ctx, viewName);
   ctx.textAlign = "left";
-  chartData.forEach((languageData, i) => {
-    drawLegendElement(ctx, languageData, 0, LEGEND_Y + i * ROW_HEIGTH);
-  });
+  if (viewName === VIEW_NAMES.searchingValues) {
+    chartData.forEach((languageData, i) => {
+      drawLegendElement(ctx, languageData, 0, LEGEND_Y + i * ROW_HEIGTH);
+    });
+  } else if (viewName === VIEW_NAMES.searchingDuels) {
+    duels.getConfig().forEach((duel, i) => {
+      drawDuelElement(ctx, duel, 0, LEGEND_Y + i * ROW_HEIGTH);
+    });
+  }
 };
 
 export default drawLegend;
