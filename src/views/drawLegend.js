@@ -68,6 +68,15 @@ const drawLegend = (ctx, chartData, viewName, duels) => {
       drawDuelElement(ctx, duel, 0, LEGEND_Y + i * ROW_HEIGTH);
     });
   }
+  if (viewName === VIEW_NAMES.usageValues) {
+    chartData.forEach((languageData, i) => {
+      drawLegendElement(ctx, languageData, 0, LEGEND_Y + i * ROW_HEIGTH);
+    });
+  } else if (viewName === VIEW_NAMES.usageDuels) {
+    duels.getConfig().forEach((duel, i) => {
+      drawDuelElement(ctx, duel, 0, LEGEND_Y + i * ROW_HEIGTH);
+    });
+  }
 };
 
 export default drawLegend;

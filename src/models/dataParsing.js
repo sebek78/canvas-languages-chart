@@ -1,17 +1,19 @@
-import { LANGUAGES } from "../constants";
 import { Maybe } from "./wrapper";
 import * as R from "ramda";
+import {
+  getValue,
+  findMaxValue,
+  oneArray,
+  sortByDate,
+  appendDatesToRecord,
+  groupData,
+  getMinMaxTime,
+  getLastElement,
+  sortByValue,
+  addColorInfo,
+} from "./common";
 
 /* chart data */
-const diffDate = (a, b) => a.date - b.date;
-const sortByDateFn = (data) => R.sort(diffDate, data).reverse();
-
-const appendDate = (monthlyData, date) =>
-  monthlyData.map((lang) => `${lang},${Date.parse(date)}`);
-const appendDatesToRecordFn = (data) =>
-  data.valueOf().map(({ dataset, date }) => appendDate(dataset, date));
-
-const oneArrayFn = (data) => data.valueOf().flat();
 
 const parseRecordFn = (data) =>
   data.valueOf().map((record) => {
@@ -25,19 +27,7 @@ const parseRecordFn = (data) =>
     };
   });
 
-const findChartPoint = (data, language) =>
-  data.filter((record) => record.language === language.name);
-
-const groupDataFn = (data) =>
-  LANGUAGES.map((language) => findChartPoint(data.valueOf(), language)).filter(
-    (element) => element.length
-  );
-
-const groupData = (data) => Maybe.of(data).map(groupDataFn);
 const parseRecord = (data) => Maybe.of(data).map(parseRecordFn);
-const oneArray = (data) => Maybe.of(data).map(oneArrayFn);
-const appendDatesToRecord = (data) => Maybe.of(data).map(appendDatesToRecordFn);
-const sortByDate = (data) => Maybe.of(data).map(sortByDateFn);
 
 const parseChartData = (data) =>
   R.compose(
@@ -48,7 +38,8 @@ const parseChartData = (data) =>
     sortByDate
   )(data);
 
-/* Dates */
+/* chart dates */
+
 const getDatesFn = (data) =>
   data
     .map((monthlyData) => ({
@@ -60,45 +51,9 @@ const getDatesFn = (data) =>
 const getDates = (data) => Maybe.of(data).map(getDatesFn);
 
 /* Legend */
-const getLastElementFn = (data) =>
-  data.valueOf().map((language) => language[language.length - 1]);
-
-const diffValue = (a, b) => a.value - b.value;
-const sortByValueFn = (data) => R.sort(diffValue, data.valueOf()).reverse();
-
-const findColor = (language) =>
-  LANGUAGES.find((lang) => lang.name === language).color;
-
-const addColorInfoFn = (data) =>
-  data
-    .valueOf()
-    .filter((record) => !R.isNil(record))
-    .map((rowData) => ({ ...rowData, color: findColor(rowData.language) }));
-
-const getLastElement = (data) => Maybe.of(data).map(getLastElementFn);
-const sortByValue = (data) => Maybe.of(data).map(sortByValueFn);
-const addColorInfo = (data) => Maybe.of(data).map(addColorInfoFn);
 
 const parseLegendData = (chartData) =>
   R.compose(addColorInfo, sortByValue, getLastElement)(chartData);
-
-/* Max Y */
-
-const findMaxAndCeilFn = (selectedLanguages) =>
-  Math.ceil(Math.max(...selectedLanguages.valueOf()));
-const selectVisible = (lang) => (lang.visibility ? lang.value : 0);
-const getVisibleLanguagesFn = (chartData) =>
-  chartData.valueOf().map(selectVisible);
-
-const getVisibleLanguages = (chartData) =>
-  Maybe.of(chartData).map(getVisibleLanguagesFn);
-const findMaxAndCeil = (selectedLanguages) =>
-  Maybe.of(selectedLanguages).map(findMaxAndCeilFn);
-
-const findMaxValue = (chartData) =>
-  R.compose(findMaxAndCeil, getVisibleLanguages, oneArray)(chartData);
-
-export const countIndex = (tx, t0, dt) => Math.round((tx - t0) / dt);
 
 export const parseData = (data) => {
   let chartData = parseChartData(data);
@@ -106,27 +61,8 @@ export const parseData = (data) => {
   const legendData = parseLegendData(chartData);
   let maxY = findMaxValue(chartData);
 
-  const getValue = (wrapper, defaultValue = []) =>
-    wrapper.type === "nothing" ? defaultValue : wrapper.valueOf();
-
   const setNewMaxValue = (chartData) => {
     maxY = Maybe.of(chartData).map(findMaxValue).valueOf();
-  };
-
-  const getMinMaxTime = (chartData) => {
-    let minTime = chartData[0][0].date;
-    let maxTime = chartData[0][0].date;
-    const dt = 30 * 24 * 60 * 60 * 1000;
-
-    chartData.forEach((langData) => {
-      langData.forEach((record) => {
-        if (record.date < minTime) minTime = record.date;
-        if (record.date > maxTime) maxTime = record.date;
-      });
-    });
-
-    const maxX = countIndex(maxTime, minTime, dt) + 1;
-    return { minTime, maxX, dt };
   };
 
   return {
@@ -135,6 +71,6 @@ export const parseData = (data) => {
     getChartData: () => getValue(chartData),
     getDates: () => getValue(chartDates),
     getLegendData: () => getValue(legendData),
-    getMinMaxTime: () => getMinMaxTime(getValue(chartData)),
+    getMinMaxTime: () => getMinMaxTime(getValue(chartData), false),
   };
 };

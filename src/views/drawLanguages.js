@@ -1,5 +1,5 @@
 import { getLanguageColor, scaleX, scaleY } from "../drawing";
-import { countIndex } from "../models/dataParsing";
+import { countIndex } from "../models/common";
 
 const drawLanguageLine = (ctx, x1, y1, x2, y2, color) => {
   ctx.lineJoin = "round";

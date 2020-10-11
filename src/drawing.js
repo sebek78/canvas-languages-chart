@@ -88,42 +88,48 @@ export const setCanvasSize = (legendHeight) => {
 
 let [ctx1, ctx2] = createCtx();
 
-export const drawing = (
-  getChartData,
-  getDates,
-  getLegendData,
-  getMaxY,
-  viewName,
-  duels,
-  getMinMaxTime
-) => {
+export const drawing = (viewName, chartData, duels, chartData2) => {
+  const {
+    getChartData,
+    getDates,
+    getLegendData,
+    getMaxY,
+    getMinMaxTime,
+  } = chartData;
+  const {
+    getChartData2,
+    getDates2,
+    getLegendData2,
+    getMaxY2,
+    getMinMaxTime2,
+  } = chartData2;
   drawCanvas(ctx1);
   drawCanvas(ctx2);
-  drawChart(ctx1, getDates(), getMaxY(), getMinMaxTime());
-  drawLanguageLines(ctx1, getChartData(), getMaxY(), getMinMaxTime());
-  drawLegend(ctx2, getLegendData(), viewName, duels);
+  if (
+    viewName === VIEW_NAMES.searchingValues ||
+    viewName === VIEW_NAMES.searchingDuels
+  ) {
+    drawChart(ctx1, getDates(), getMaxY(), getMinMaxTime());
+    drawLanguageLines(ctx1, getChartData(), getMaxY(), getMinMaxTime());
+    drawLegend(ctx2, getLegendData(), viewName, duels);
+  } else if (
+    viewName === VIEW_NAMES.usageValues ||
+    viewName === VIEW_NAMES.usageDuels
+  ) {
+    drawChart(ctx1, getDates2(), getMaxY2(), getMinMaxTime2());
+    drawLanguageLines(ctx1, getChartData2(), getMaxY2(), getMinMaxTime2());
+    drawLegend(ctx2, getLegendData2(), viewName, duels);
+  }
 };
 
-export const createView = (
-  { getChartData, getDates, getLegendData, getMaxY, getMinMaxTime },
-  duels
-) => {
+export const createView = (chartData, duels, chartData2) => {
   let viewName = VIEW_NAMES.searchingValues;
   let legendHeight =
-    LEGEND_Y + ROW_HEIGTH * getLegendData().length + LEGEND_BOTTOM_PADDING;
+    LEGEND_Y + ROW_HEIGTH * LANGUAGES.length + LEGEND_BOTTOM_PADDING;
   setCanvasSize(legendHeight);
 
   return {
-    draw: () =>
-      drawing(
-        getChartData,
-        getDates,
-        getLegendData,
-        getMaxY,
-        viewName,
-        duels,
-        getMinMaxTime
-      ),
+    draw: () => drawing(viewName, chartData, duels, chartData2),
     view: () => viewName,
     setView: (newName) => {
       viewName = newName;

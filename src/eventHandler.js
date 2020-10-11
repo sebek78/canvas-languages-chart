@@ -84,20 +84,29 @@ const handleLegendMenuClick = (
   setMaxY,
   legendData
 ) => {
+  const description = document.querySelector(".description");
   if (x > 0 && x < 70 && y > 35 && y < 55) {
+    description.textContent =
+      "Searching popularity of some programming languages.";
     setView(VIEW_NAMES.searchingValues);
     const langVisibility = getPrevVisibility(legendData);
     setSelectedVisibility(chartData, langVisibility);
     setMaxY();
   } else if (x > 90 && x < 160 && y > 35 && y < 55) {
+    description.textContent =
+      "Some duels between programming languages (searching).";
     setView(VIEW_NAMES.searchingDuels);
     setAllVisibility(chartData, false);
     const index = duels.getDuelIndex();
     setDuelsVisibility(duels, chartData, index);
     setMaxY();
   } else if (x > 0 && x < 70 && y > 95 && y < 115) {
+    description.textContent =
+      "The usage popularity of some programming languages.";
     setView(VIEW_NAMES.usageValues);
   } else if (x > 90 && x < 160 && y > 95 && y < 115) {
+    description.textContent =
+      "Some duels between programming languages (usage).";
     setView(VIEW_NAMES.usageDuels);
   }
 };
@@ -117,51 +126,49 @@ const handleDuelsClick = (x, y, chartData, setMaxY, duels) => {
 const handleEvent = (
   { offsetX, offsetY },
   chartData,
-  legendData,
-  setMaxY,
   draw,
   setView,
   view,
-  duels
+  duels,
+  chartData2
 ) => {
+  const { getChartData, getLegendData, setMaxY } = chartData;
+  console.log(chartData2);
   if (offsetY < LEGEND_Y) {
     handleLegendMenuClick(
       offsetX,
       offsetY,
       setView,
-      chartData,
+      getChartData(),
       duels,
       setMaxY,
-      legendData
+      getLegendData()
     );
   } else {
     if (view() === VIEW_NAMES.searchingValues) {
-      handleLegendClick(offsetX, offsetY, chartData, legendData, setMaxY);
+      handleLegendClick(
+        offsetX,
+        offsetY,
+        getChartData(),
+        getLegendData(),
+        setMaxY
+      );
     } else if (view() === VIEW_NAMES.searchingDuels) {
-      handleDuelsClick(offsetX, offsetY, chartData, setMaxY, duels);
+      handleDuelsClick(offsetX, offsetY, getChartData(), setMaxY, duels);
     }
   }
   window.requestAnimationFrame(draw);
 };
 
 const eventHandler = (
-  { getChartData, getLegendData, setMaxY },
+  chartData,
   { draw, setView, view },
-  duels
+  duels,
+  chartData2
 ) => {
   canvas2.addEventListener(
     "click",
-    (e) =>
-      handleEvent(
-        e,
-        getChartData(),
-        getLegendData(),
-        setMaxY,
-        draw,
-        setView,
-        view,
-        duels
-      ),
+    (e) => handleEvent(e, chartData, draw, setView, view, duels, chartData2),
     false
   );
   window.addEventListener("orientationchange", function () {
