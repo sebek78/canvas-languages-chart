@@ -16,7 +16,7 @@ const drawLegendElement = (
     ctx.fillRect(x + 2, y + 2, BOX_SIZE - 4, BOX_SIZE - 4);
   }
   ctx.fillStyle = visibility ? "white" : "#AAA";
-  ctx.fillText(`${language} ${value.toFixed(2)} %`, x + 30, y + 12);
+  ctx.fillText(`${language} ${value} %`, x + 30, y + 12);
 };
 
 const setLightColor = (match) => (match ? "lime" : "#AAA");

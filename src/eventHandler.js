@@ -133,7 +133,8 @@ const handleEvent = (
   chartData2
 ) => {
   const { getChartData, getLegendData, setMaxY } = chartData;
-  console.log(chartData2);
+  const { getChartData2, getLegendData2, setMaxY2 } = chartData2;
+
   if (offsetY < LEGEND_Y) {
     handleLegendMenuClick(
       offsetX,
@@ -155,6 +156,14 @@ const handleEvent = (
       );
     } else if (view() === VIEW_NAMES.searchingDuels) {
       handleDuelsClick(offsetX, offsetY, getChartData(), setMaxY, duels);
+    } else if (view() === VIEW_NAMES.usageValues) {
+      handleLegendClick(
+        offsetX,
+        offsetY,
+        getChartData2(),
+        getLegendData2(),
+        setMaxY2
+      );
     }
   }
   window.requestAnimationFrame(draw);

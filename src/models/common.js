@@ -10,9 +10,7 @@ export const oneArray = (data) => Maybe.of(data).map(oneArrayFn);
 
 /* sorting */
 
-const diffDate = (a, b) => a.date - b.date;
-const sortByDateFn = (data) => R.sort(diffDate, data).reverse();
-export const sortByDate = (data) => Maybe.of(data).map(sortByDateFn);
+export const diffDate = (a, b) => a.date - b.date; // sort timestamps (number type)
 
 const diffValue = (a, b) => a.value - b.value;
 const sortByValueFn = (data) => R.sort(diffValue, data.valueOf()).reverse();
@@ -37,7 +35,7 @@ export const findMaxValue = (chartData) =>
 /* Append date to record */
 
 const appendDate = (recordData, date) =>
-  recordData.map((lang) => `${lang},${Date.parse(date)}`);
+  recordData.map((lang) => `${lang},${date}`);
 const appendDatesToRecordFn = (data) =>
   data.valueOf().map(({ dataset, date }) => appendDate(dataset, date));
 export const appendDatesToRecord = (data) =>
@@ -77,10 +75,9 @@ export const getMinMaxTime = (chartData, onlyYears) => {
 
 /* legend */
 
-const getLastElementFn = (data) => {
-  console.log(data.valueOf());
-  return data.valueOf().map((language) => language[language.length - 1]);
-};
+const getLastElementFn = (data) =>
+  data.valueOf().map((language) => language[language.length - 1]);
+
 export const getLastElement = (data) => Maybe.of(data).map(getLastElementFn);
 
 const findColor = (language) =>

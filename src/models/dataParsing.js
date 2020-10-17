@@ -4,7 +4,7 @@ import {
   getValue,
   findMaxValue,
   oneArray,
-  sortByDate,
+  diffDate,
   appendDatesToRecord,
   groupData,
   getMinMaxTime,
@@ -12,6 +12,30 @@ import {
   sortByValue,
   addColorInfo,
 } from "./common";
+
+/* sorting */
+
+const splitDateString = (record) => ({
+  ...record,
+  date: record.date.split("-"),
+});
+
+const getYearAndMonth = (date) => [
+  parseInt(date[0], 10),
+  parseInt(date[1], 10),
+];
+
+const parseDateString = (record) => ({
+  ...record,
+  date: Date.UTC(...getYearAndMonth(record.date)),
+});
+
+const sortByDateFn = (data) => {
+  let dataWithParsedDates = data.map(splitDateString).map(parseDateString);
+  return R.sort(diffDate, dataWithParsedDates);
+};
+
+export const sortByDate = (data) => Maybe.of(data).map(sortByDateFn);
 
 /* chart data */
 
