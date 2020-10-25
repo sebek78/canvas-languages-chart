@@ -2,7 +2,7 @@
 export const WIDTH = 640;
 export const HEIGHT = 600;
 export const MENU_HEIGHT = 30;
-export const LEGEND_MAX_WIDTH = 300;
+export const LEGEND_MAX_WIDTH = 270;
 export const CHART_MAX_WIDTH = 800;
 export const CHART_MAX_HEIGHT = 700;
 
@@ -40,4 +40,5 @@ export const LANGUAGES = [
   { name: "Go", color: "#79C5D9" },
   { name: "Rust", color: "#DE3515" },
   { name: "Dart", color: "#00CCB3" },
+  { name: "Kotlin", color: "#f1850b" },
 ];

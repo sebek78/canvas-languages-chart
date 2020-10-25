@@ -7,7 +7,7 @@ import {
 import { scaleY, scaleX } from "../drawing";
 
 const TICK_LENGTH = 9;
-const CHART_VALUES = [1, 2, 4, 8, 16, 32];
+const CHART_VALUES = [1, 2, 4, 8, 16, 32, 64];
 
 /* Y axis */
 
@@ -74,20 +74,24 @@ const drawXticks = (ctx, maxX) => {
   }
 };
 
+const drawFillText = (ctx, date, x, dates, lowerText) => {
+  const marginBottom = lowerText ? 10 : 28; // pixels
+  ctx.fillText(
+    date,
+    scaleX(ctx, x, dates.length),
+    ctx.canvas.height - marginBottom
+  );
+};
+
 const drawXValues = (ctx, dates) => {
   ctx.textAlign = "center";
   dates.forEach((date, x) => {
-    ctx.fillText(
-      date.month,
-      scaleX(ctx, x, dates.length),
-      ctx.canvas.height - 28
-    );
-    if (x === 0)
-      ctx.fillText(
-        date.year,
-        scaleX(ctx, x, dates.length),
-        ctx.canvas.height - 10
-      );
+    if (date.month) {
+      drawFillText(ctx, date.month, x, dates, false);
+      if (x === 0) drawFillText(ctx, date.year, x, dates, true);
+    } else {
+      drawFillText(ctx, date.year, x, dates, false);
+    }
   });
 };
 
@@ -108,16 +112,16 @@ const drawBackgoundLines = (ctx, maxY) => {
   });
 };
 
-const drawChart = (ctx, dates, maxY) => {
+const drawChart = (ctx, dates, maxY, { maxX }) => {
+  ctx.fillStyle = "#555";
+  drawBackgoundLines(ctx, maxY);
   ctx.fillStyle = "white";
   drawYaxis(ctx);
   drawYticks(ctx, maxY);
   drawYvalues(ctx, maxY);
   drawXaxis(ctx);
-  drawXticks(ctx, dates.length);
+  drawXticks(ctx, maxX);
   drawXValues(ctx, dates);
-  ctx.fillStyle = "#555";
-  drawBackgoundLines(ctx, maxY);
 };
 
 export default drawChart;

@@ -1,5 +1,17 @@
 import { ROW_HEIGTH, BOX_SIZE, LEGEND_Y, VIEW_NAMES } from "../constants";
 import { setTextContext } from "./../drawing";
+import { getColor } from "../models/common";
+
+/*  Legend */
+
+const drawBox = (ctx, x, y, color, visibility) => {
+  ctx.fillStyle = color;
+  ctx.fillRect(x, y, BOX_SIZE, BOX_SIZE);
+  if (!visibility) {
+    ctx.fillStyle = "black";
+    ctx.fillRect(x + 2, y + 2, BOX_SIZE - 4, BOX_SIZE - 4);
+  }
+};
 
 const drawLegendElement = (
   ctx,
@@ -7,14 +19,9 @@ const drawLegendElement = (
   x,
   y
 ) => {
-  ctx.fillStyle = color;
-  ctx.fillRect(x, y, BOX_SIZE, BOX_SIZE);
-  if (!visibility) {
-    ctx.fillStyle = "black";
-    ctx.fillRect(x + 2, y + 2, BOX_SIZE - 4, BOX_SIZE - 4);
-  }
+  drawBox(ctx, x, y, color, visibility);
   ctx.fillStyle = visibility ? "white" : "#AAA";
-  ctx.fillText(`${language} ${value.toFixed(2)} %`, x + 30, y + 12);
+  ctx.fillText(`${language} ${value} %`, x + 30, y + 12);
 };
 
 const setLightColor = (match) => (match ? "lime" : "#AAA");
@@ -40,12 +47,58 @@ const drawLegendMenu = (ctx, viewName) => {
   ctx.fillText("Duels", 90, 106);
 };
 
-const drawLegend = (ctx, chartData, viewName) => {
+/* Duels */
+
+const drawDuelElement = (ctx, { visibility, languages }, x, y) => {
+  ctx.fillStyle = visibility ? "white" : "#AAA";
+  ctx.fillRect(x, y, BOX_SIZE, BOX_SIZE);
+  if (!visibility) {
+    ctx.fillStyle = "black";
+    ctx.fillRect(x + 2, y + 2, BOX_SIZE - 4, BOX_SIZE - 4);
+  }
+  ctx.fillStyle = visibility ? "white" : "#AAA";
+  const description = languages.join(" vs ");
+  ctx.fillText(`${description}`, x + 30, y + 12);
+};
+
+const drawLanguageInfo = (ctx, language, index, y) => {
+  const color = getColor(language);
+  drawBox(ctx, 30, y, color, true);
+  ctx.fillStyle = "white";
+  ctx.fillText(`${language}`, 60, y + 12);
+};
+
+const drawLegend = (ctx, chartData, viewName, duels) => {
   drawLegendMenu(ctx, viewName);
   ctx.textAlign = "left";
-  chartData.forEach((languageData, i) => {
-    drawLegendElement(ctx, languageData, 0, LEGEND_Y + i * ROW_HEIGTH);
-  });
+  const LEGEND_Y_INFO = duels.getConfig().length * ROW_HEIGTH;
+
+  if (viewName === VIEW_NAMES.searchingValues) {
+    chartData.forEach((languageData, i) => {
+      drawLegendElement(ctx, languageData, 0, LEGEND_Y + i * ROW_HEIGTH);
+    });
+  } else if (viewName === VIEW_NAMES.searchingDuels) {
+    duels.getConfig().forEach((duel, i) => {
+      drawDuelElement(ctx, duel, 0, LEGEND_Y + i * ROW_HEIGTH);
+    });
+    duels.getConfig()[duels.getDuelIndex()].languages.forEach((language, i) => {
+      const y = LEGEND_Y + LEGEND_Y_INFO + (i + 1) * ROW_HEIGTH;
+      drawLanguageInfo(ctx, language, i, y);
+    });
+  }
+  if (viewName === VIEW_NAMES.usageValues) {
+    chartData.forEach((languageData, i) => {
+      drawLegendElement(ctx, languageData, 0, LEGEND_Y + i * ROW_HEIGTH);
+    });
+  } else if (viewName === VIEW_NAMES.usageDuels) {
+    duels.getConfig().forEach((duel, i) => {
+      drawDuelElement(ctx, duel, 0, LEGEND_Y + i * ROW_HEIGTH);
+    });
+    duels.getConfig()[duels.getDuelIndex()].languages.forEach((language, i) => {
+      const y = LEGEND_Y + LEGEND_Y_INFO + (i + 1) * ROW_HEIGTH;
+      drawLanguageInfo(ctx, language, i, y);
+    });
+  }
 };
 
 export default drawLegend;

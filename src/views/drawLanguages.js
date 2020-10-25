@@ -1,4 +1,5 @@
 import { getLanguageColor, scaleX, scaleY } from "../drawing";
+import { countIndex } from "../models/common";
 
 const drawLanguageLine = (ctx, x1, y1, x2, y2, color) => {
   ctx.lineJoin = "round";
@@ -11,23 +12,25 @@ const drawLanguageLine = (ctx, x1, y1, x2, y2, color) => {
   ctx.closePath();
 };
 
-const drawLanguage = (ctx, language, maxY, maxX) => {
+const drawLanguage = (ctx, language, maxY, maxX, minTime, dt) => {
   const color = getLanguageColor(language[0].language);
   language.forEach((record, i) => {
-    const x1 = scaleX(ctx, i, maxX);
+    const t1 = countIndex(record.date, minTime, dt);
+    const x1 = scaleX(ctx, t1, maxX);
     const y1 = scaleY(ctx, record.value, maxY);
     if (i > 0) {
-      const x2 = scaleX(ctx, i - 1, maxX);
+      const t2 = countIndex(language[i - 1].date, minTime, dt);
+      const x2 = scaleX(ctx, t2, maxX);
       const y2 = scaleY(ctx, language[i - 1].value, maxY);
       drawLanguageLine(ctx, x1, y1, x2, y2, color);
     }
   });
 };
 
-const drawLanguagesLines = (ctx, chartData, maxY) => {
+const drawLanguagesLines = (ctx, chartData, maxY, { minTime, maxX, dt }) => {
   chartData.forEach((language) => {
-    if (language[0].visibility)
-      drawLanguage(ctx, language, maxY, language.length);
+    if (language.length && language[0].visibility)
+      drawLanguage(ctx, language, maxY, maxX, minTime, dt);
   });
 };
 
