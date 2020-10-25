@@ -80,9 +80,12 @@ const handleLegendMenuClick = (
   y,
   setView,
   chartData,
+  chartData2,
   duels,
   setMaxY,
-  legendData
+  setMaxY2,
+  legendData,
+  legendData2
 ) => {
   const description = document.querySelector(".description");
   if (x > 0 && x < 70 && y > 35 && y < 55) {
@@ -104,10 +107,17 @@ const handleLegendMenuClick = (
     description.textContent =
       "The usage popularity of some programming languages.";
     setView(VIEW_NAMES.usageValues);
+    const langVisibility = getPrevVisibility(legendData2);
+    setSelectedVisibility(chartData2, langVisibility);
+    setMaxY2();
   } else if (x > 90 && x < 160 && y > 95 && y < 115) {
     description.textContent =
       "Some duels between programming languages (usage).";
     setView(VIEW_NAMES.usageDuels);
+    setAllVisibility(chartData2, false);
+    const index = duels.getDuelIndex();
+    setDuelsVisibility(duels, chartData2, index);
+    setMaxY2();
   }
 };
 
@@ -141,9 +151,12 @@ const handleEvent = (
       offsetY,
       setView,
       getChartData(),
+      getChartData2(),
       duels,
       setMaxY,
-      getLegendData()
+      setMaxY2,
+      getLegendData(),
+      getLegendData2()
     );
   } else {
     if (view() === VIEW_NAMES.searchingValues) {
@@ -164,6 +177,8 @@ const handleEvent = (
         getLegendData2(),
         setMaxY2
       );
+    } else if (view() === VIEW_NAMES.usageDuels) {
+      handleDuelsClick(offsetX, offsetY, getChartData2(), setMaxY2, duels);
     }
   }
   window.requestAnimationFrame(draw);

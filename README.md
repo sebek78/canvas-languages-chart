@@ -1,12 +1,17 @@
 # Canvas-languages-chart
 
-This simple line chart shows searching popularity of programming languges.
+This simple line chart shows searching popularity and usage of programming languages.
 
 ## Features
 
-- Ability to show or hide languages (by clicking on the legend)
-- Dynamic Y axis when max value was changed for visible languages
-- Only specyfic programming languages selected by me
+- Responsive chart.
+- Ability to show or hide languages (by clicking on the legend).
+- Dynamic Y axis when max value was changed for visible languages.
+- Only specyfic programming languages selected by me.
+- Drawing languages in a predefined group (duels).
+- Two datasets:
+  - searching popularity (monthly data)
+  - usage by professional developers (yearly data)
 
 ## Live version
 

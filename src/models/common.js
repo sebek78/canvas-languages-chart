@@ -8,6 +8,9 @@ export const getValue = (wrapper, defaultValue = []) =>
 const oneArrayFn = (data) => data.valueOf().flat();
 export const oneArray = (data) => Maybe.of(data).map(oneArrayFn);
 
+export const getColor = (language) =>
+  LANGUAGES.find((lang) => lang.name === language).color;
+
 /* sorting */
 
 export const diffDate = (a, b) => a.date - b.date; // sort timestamps (number type)
