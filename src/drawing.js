@@ -17,6 +17,7 @@ import drawCanvas from "./views/drawCanvas";
 import drawChart from "./views/drawChart";
 import drawLegend from "./views/drawLegend";
 import drawLanguageLines from "./views/drawLanguages";
+import drawChartPoint from "./views/drawChartPoint";
 
 /* drawing helpers */
 
@@ -95,6 +96,7 @@ export const drawing = (viewName, chartData, duels, chartData2) => {
     getLegendData,
     getMaxY,
     getMinMaxTime,
+    getChartPoint,
   } = chartData;
   const {
     getChartData2,
@@ -112,6 +114,7 @@ export const drawing = (viewName, chartData, duels, chartData2) => {
     drawChart(ctx1, getDates(), getMaxY(), getMinMaxTime());
     drawLanguageLines(ctx1, getChartData(), getMaxY(), getMinMaxTime());
     drawLegend(ctx2, getLegendData(), viewName, duels);
+    drawChartPoint(ctx1, getChartPoint(), getMinMaxTime(), getMaxY());
   } else if (
     viewName === VIEW_NAMES.usageValues ||
     viewName === VIEW_NAMES.usageDuels

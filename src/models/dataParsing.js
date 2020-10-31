@@ -22,7 +22,7 @@ const splitDateString = (record) => ({
 
 const getYearAndMonth = (date) => [
   parseInt(date[0], 10),
-  parseInt(date[1], 10),
+  parseInt(date[1], 10) - 1,
 ];
 
 const parseDateString = (record) => ({
@@ -84,9 +84,14 @@ export const parseData = (data) => {
   const chartDates = getDates(data);
   const legendData = parseLegendData(chartData);
   let maxY = findMaxValue(chartData);
+  let chartPoint = Maybe.of(null);
 
   const setNewMaxValue = (chartData) => {
     maxY = Maybe.of(chartData).map(findMaxValue).valueOf();
+  };
+
+  const setChartPoint = (value) => {
+    chartPoint = value;
   };
 
   return {
@@ -96,5 +101,7 @@ export const parseData = (data) => {
     getDates: () => getValue(chartDates),
     getLegendData: () => getValue(legendData),
     getMinMaxTime: () => getMinMaxTime(getValue(chartData), false),
+    getChartPoint: () => getValue(chartPoint),
+    setChartPoint: (x, value) => setChartPoint(x, value),
   };
 };

@@ -1,4 +1,5 @@
-import { canvas2, setCanvasSize } from "./drawing";
+import { canvas1, canvas2, setCanvasSize } from "./drawing";
+import { handleMouseMove } from "./eventHandlers/handleMouseMove";
 
 import {
   LEGEND_Y,
@@ -6,6 +7,7 @@ import {
   ROW_HEIGTH,
   BOX_SIZE,
   VIEW_NAMES,
+  LEFT_PADDING,
 } from "./constants";
 
 const checkRowLegend = (x, y, rows) => {
@@ -203,6 +205,11 @@ const eventHandler = (
     setCanvasSize();
     draw();
   });
+  canvas1.addEventListener(
+    "mousemove",
+    (e) => handleMouseMove(e, view, draw, chartData, chartData2),
+    false
+  );
 };
 
 export default eventHandler;
