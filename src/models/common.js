@@ -2,9 +2,6 @@ import * as R from "ramda";
 import { Maybe } from "./wrapper";
 import { LANGUAGES } from "../constants";
 
-export const getValue = (wrapper, defaultValue = []) =>
-  wrapper.type === "nothing" ? defaultValue : wrapper.valueOf();
-
 const oneArrayFn = (data) => data.valueOf().flat();
 export const oneArray = (data) => Maybe.of(data).map(oneArrayFn);
 

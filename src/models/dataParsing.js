@@ -1,7 +1,6 @@
-import { Maybe } from "./wrapper";
+import { Maybe, getValue } from "./wrapper";
 import * as R from "ramda";
 import {
-  getValue,
   findMaxValue,
   oneArray,
   diffDate,
@@ -84,14 +83,9 @@ export const parseData = (data) => {
   const chartDates = getDates(data);
   const legendData = parseLegendData(chartData);
   let maxY = findMaxValue(chartData);
-  let chartPoint = Maybe.of(null);
 
   const setNewMaxValue = (chartData) => {
     maxY = Maybe.of(chartData).map(findMaxValue).valueOf();
-  };
-
-  const setChartPoint = (value) => {
-    chartPoint = value;
   };
 
   return {
@@ -101,7 +95,5 @@ export const parseData = (data) => {
     getDates: () => getValue(chartDates),
     getLegendData: () => getValue(legendData),
     getMinMaxTime: () => getMinMaxTime(getValue(chartData), false),
-    getChartPoint: () => getValue(chartPoint),
-    setChartPoint: (x, value) => setChartPoint(x, value),
   };
 };

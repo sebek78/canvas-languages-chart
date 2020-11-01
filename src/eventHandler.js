@@ -7,7 +7,6 @@ import {
   ROW_HEIGTH,
   BOX_SIZE,
   VIEW_NAMES,
-  LEFT_PADDING,
 } from "./constants";
 
 const checkRowLegend = (x, y, rows) => {

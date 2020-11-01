@@ -1,3 +1,6 @@
+export const getValue = (wrapper, defaultValue = []) =>
+  wrapper.type === "nothing" ? defaultValue : wrapper.valueOf();
+
 const Wrapper = (value) => ({
   map: (fn) => Wrapper(fn(value)),
   flatMap: (fn) => fn(value),

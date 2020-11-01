@@ -89,14 +89,13 @@ export const setCanvasSize = (legendHeight) => {
 
 let [ctx1, ctx2] = createCtx();
 
-export const drawing = (viewName, chartData, duels, chartData2) => {
+export const drawing = (viewName, chartData, duels, chartData2, chartPoint) => {
   const {
     getChartData,
     getDates,
     getLegendData,
     getMaxY,
     getMinMaxTime,
-    getChartPoint,
   } = chartData;
   const {
     getChartData2,
@@ -114,7 +113,8 @@ export const drawing = (viewName, chartData, duels, chartData2) => {
     drawChart(ctx1, getDates(), getMaxY(), getMinMaxTime());
     drawLanguageLines(ctx1, getChartData(), getMaxY(), getMinMaxTime());
     drawLegend(ctx2, getLegendData(), viewName, duels);
-    drawChartPoint(ctx1, getChartPoint(), getMinMaxTime(), getMaxY());
+    if (chartPoint.type !== "nothing")
+      drawChartPoint(ctx1, chartPoint, getMinMaxTime(), getMaxY());
   } else if (
     viewName === VIEW_NAMES.usageValues ||
     viewName === VIEW_NAMES.usageDuels
@@ -122,6 +122,8 @@ export const drawing = (viewName, chartData, duels, chartData2) => {
     drawChart(ctx1, getDates2(), getMaxY2(), getMinMaxTime2());
     drawLanguageLines(ctx1, getChartData2(), getMaxY2(), getMinMaxTime2());
     drawLegend(ctx2, getLegendData2(), viewName, duels);
+    if (chartPoint.type !== "nothing")
+      drawChartPoint(ctx1, chartPoint, getMinMaxTime2(), getMaxY2());
   }
 };
 
@@ -132,7 +134,8 @@ export const createView = (chartData, duels, chartData2) => {
   setCanvasSize(legendHeight);
 
   return {
-    draw: () => drawing(viewName, chartData, duels, chartData2),
+    draw: (chartPoint) =>
+      drawing(viewName, chartData, duels, chartData2, chartPoint),
     view: () => viewName,
     setView: (newName) => {
       viewName = newName;

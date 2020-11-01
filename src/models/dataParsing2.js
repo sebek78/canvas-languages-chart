@@ -1,7 +1,6 @@
-import { Maybe } from "./wrapper";
+import { Maybe, getValue } from "./wrapper";
 import * as R from "ramda";
 import {
-  getValue,
   findMaxValue,
   oneArray,
   diffDate,

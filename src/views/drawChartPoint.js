@@ -5,8 +5,9 @@ const RADIUS = 6;
 const INNER_RADIUS = 4;
 const FULL_CIRCLE = [0, 2 * Math.PI, false];
 
-const drawChartPoint = (ctx, pointData, { minTime, maxX, dt }, maxY) => {
-  if (pointData && pointData.visibility) {
+const drawChartPoint = (ctx, chartPoint, { minTime, maxX, dt }, maxY) => {
+  if (chartPoint.valueOf() && chartPoint.valueOf().visibility) {
+    const pointData = chartPoint.valueOf();
     const index = countIndex(pointData.date, minTime, dt);
     const x = scaleX(ctx, index, maxX);
     const y = scaleY(ctx, pointData.value, maxY);
