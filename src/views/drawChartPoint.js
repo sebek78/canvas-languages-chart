@@ -24,7 +24,7 @@ const drawChartPoint = (ctx, chartPoint, { minTime, maxX, dt }, maxY) => {
     ctx.fill();
 
     ctx.fillStyle = "white";
-    ctx.fillText(`${pointData.value} %`, x + 20, y - 20);
+    ctx.fillText(`${pointData.value} %`, x + 30, y - 20);
   }
 };
 

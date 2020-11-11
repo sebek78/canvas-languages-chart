@@ -1,5 +1,6 @@
 import { canvas1, canvas2, setCanvasSize } from "./drawing";
 import { handleMouseMove } from "./eventHandlers/handleMouseMove";
+import { getData } from "./models/common";
 
 import {
   LEGEND_Y,
@@ -81,44 +82,40 @@ const handleLegendMenuClick = (
   y,
   setView,
   chartData,
-  chartData2,
   duels,
   setMaxY,
-  setMaxY2,
-  legendData,
-  legendData2
+  legendData
 ) => {
   const description = document.querySelector(".description");
-  if (x > 0 && x < 70 && y > 35 && y < 55) {
-    description.textContent =
-      "Searching popularity of some programming languages.";
-    setView(VIEW_NAMES.searchingValues);
+  if (x > 0 && x < 70) {
+    if (y > 35 && y < 55) {
+      description.textContent =
+        "Searching popularity of some programming languages.";
+      setView(VIEW_NAMES.searchingValues);
+    } else if (y > 95 && y < 115) {
+      description.textContent =
+        "The usage popularity of some programming languages.";
+      setView(VIEW_NAMES.usageValues);
+    }
     const langVisibility = getPrevVisibility(legendData);
     setSelectedVisibility(chartData, langVisibility);
     setMaxY();
-  } else if (x > 90 && x < 160 && y > 35 && y < 55) {
-    description.textContent =
-      "Some duels between programming languages (searching).";
-    setView(VIEW_NAMES.searchingDuels);
+  }
+
+  if (x > 90 && x < 160) {
+    if (y > 35 && y < 55) {
+      description.textContent =
+        "Some duels between programming languages (searching).";
+      setView(VIEW_NAMES.searchingDuels);
+    } else if (y > 95 && y < 115) {
+      description.textContent =
+        "Some duels between programming languages (usage).";
+      setView(VIEW_NAMES.usageDuels);
+    }
     setAllVisibility(chartData, false);
     const index = duels.getDuelIndex();
     setDuelsVisibility(duels, chartData, index);
     setMaxY();
-  } else if (x > 0 && x < 70 && y > 95 && y < 115) {
-    description.textContent =
-      "The usage popularity of some programming languages.";
-    setView(VIEW_NAMES.usageValues);
-    const langVisibility = getPrevVisibility(legendData2);
-    setSelectedVisibility(chartData2, langVisibility);
-    setMaxY2();
-  } else if (x > 90 && x < 160 && y > 95 && y < 115) {
-    description.textContent =
-      "Some duels between programming languages (usage).";
-    setView(VIEW_NAMES.usageDuels);
-    setAllVisibility(chartData2, false);
-    const index = duels.getDuelIndex();
-    setDuelsVisibility(duels, chartData2, index);
-    setMaxY2();
   }
 };
 
@@ -143,8 +140,8 @@ const handleEvent = (
   duels,
   chartData2
 ) => {
-  const { getChartData, getLegendData, setMaxY } = chartData;
-  const { getChartData2, getLegendData2, setMaxY2 } = chartData2;
+  const data = getData(chartData, chartData2, view());
+  const { getChartData, getLegendData, setMaxY } = data;
 
   if (offsetY < LEGEND_Y) {
     handleLegendMenuClick(
@@ -152,12 +149,9 @@ const handleEvent = (
       offsetY,
       setView,
       getChartData(),
-      getChartData2(),
       duels,
       setMaxY,
-      setMaxY2,
-      getLegendData(),
-      getLegendData2()
+      getLegendData()
     );
   } else {
     if (view() === VIEW_NAMES.searchingValues) {
@@ -174,12 +168,12 @@ const handleEvent = (
       handleLegendClick(
         offsetX,
         offsetY,
-        getChartData2(),
-        getLegendData2(),
-        setMaxY2
+        getChartData(),
+        getLegendData(),
+        setMaxY
       );
     } else if (view() === VIEW_NAMES.usageDuels) {
-      handleDuelsClick(offsetX, offsetY, getChartData2(), setMaxY2, duels);
+      handleDuelsClick(offsetX, offsetY, getChartData(), setMaxY, duels);
     }
   }
   window.requestAnimationFrame(draw);

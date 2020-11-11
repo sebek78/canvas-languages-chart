@@ -1,5 +1,23 @@
 export const dataset1 = [
   {
+    date: "2020-11",
+    dataset: [
+      "C,1,16.21",
+      "Python,2,12.12",
+      "Java,3,11.68",
+      "C++,4,7.6",
+      "C#,5,4.67",
+      "JavaScript,7,2.03",
+      "PHP,8,1.79",
+      "Go,13,1.36",
+      "Ruby,15,1.22",
+      "Rust,25,0.58",
+      "Dart,27,0.54",
+      "Kotlin,36,0.38",
+      "TypeScript,43,0.32",
+    ],
+  },
+  {
     date: "2020-10",
     dataset: [
       "C,1,16.95",

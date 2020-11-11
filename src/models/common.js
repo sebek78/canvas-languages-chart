@@ -1,6 +1,6 @@
 import * as R from "ramda";
 import { Maybe } from "./wrapper";
-import { LANGUAGES } from "../constants";
+import { LANGUAGES, VIEW_NAMES } from "../constants";
 
 const oneArrayFn = (data) => data.valueOf().flat();
 export const oneArray = (data) => Maybe.of(data).map(oneArrayFn);
@@ -90,3 +90,18 @@ const addColorInfoFn = (data) =>
     .map((rowData) => ({ ...rowData, color: findColor(rowData.language) }));
 
 export const addColorInfo = (data) => Maybe.of(data).map(addColorInfoFn);
+
+/* chart data */
+
+export const getData = (chartData, chartData2, viewName) => {
+  let data;
+  if (
+    viewName === VIEW_NAMES.searchingValues ||
+    viewName === VIEW_NAMES.searchingDuels
+  ) {
+    data = chartData;
+  } else {
+    data = chartData2;
+  }
+  return data;
+};

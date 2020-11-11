@@ -6,6 +6,7 @@ import {
   BOTTOM_PADDING,
 } from "../constants";
 import { Maybe } from "../models/wrapper";
+import { getData } from "../models/common";
 
 let delayStartTime = null;
 const DELAY_TIME = 250;
@@ -22,6 +23,12 @@ const scaleYtoValue = (y, offsetHeight, maxY) =>
 
 const getTimestamp = (date) => Date.UTC(...date);
 
+const getMaxXY = (data) => {
+  const maxX = data.getMinMaxTime().maxX;
+  const maxY = data.getMaxY();
+  return { maxX, maxY };
+};
+
 export const handleMouseMove = (e, view, draw, chartData, chartData2) => {
   if (!delayStartTime) {
     delayStartTime = new Date();
@@ -32,69 +39,46 @@ export const handleMouseMove = (e, view, draw, chartData, chartData2) => {
       let { offsetX, offsetY } = e;
       let { offsetWidth, offsetHeight } = e.target;
       delayStartTime = null;
-      let pointData = null;
+      let pointData, xDate;
+
+      const data = getData(chartData, chartData2, view());
+      const { maxX, maxY } = getMaxXY(data);
+      const x = scaleXtoIndex(offsetX, offsetWidth, maxX);
+      const y = scaleYtoValue(offsetY, offsetHeight, maxY);
 
       if (
         view() === VIEW_NAMES.searchingValues ||
         view() === VIEW_NAMES.searchingDuels
       ) {
-        const maxX = chartData.getMinMaxTime().maxX;
-        const maxY = chartData.getMaxY();
-        const x = scaleXtoIndex(offsetX, offsetWidth, maxX);
-        const y = scaleYtoValue(offsetY, offsetHeight, maxY);
-
-        if (x < chartData.getDates().length) {
-          const xDate = getTimestamp([
-            chartData.getDates()[x].year,
-            chartData.getDates()[x].month - 1,
+        if (x < data.getDates().length) {
+          xDate = getTimestamp([
+            data.getDates()[x].year,
+            data.getDates()[x].month - 1,
           ]);
-
-          const monthlyData = chartData
-            .getChartData()
-            .map((langData) => langData.filter((lang) => lang.date === xDate))
-            .flat();
-
-          const minDiffValue = Math.min(
-            ...monthlyData.map((data) =>
-              data.visibility ? Math.abs(data.value - y) : MAX_RANGE
-            )
-          );
-
-          pointData = monthlyData
-            .filter((lang) => lang.visibility)
-            .find(
-              (data) =>
-                data.value >= y - minDiffValue && data.value <= y + minDiffValue
-            );
         }
       } else {
-        const maxX = chartData2.getMinMaxTime2().maxX;
-        const maxY = chartData2.getMaxY2();
-        const x = scaleXtoIndex(offsetX, offsetWidth, maxX);
-        const y = scaleYtoValue(offsetY, offsetHeight, maxY);
-
-        if (x < chartData2.getDates2().length) {
-          const xDate = getTimestamp([chartData2.getDates2()[x].year]);
-
-          const yearlyData = chartData2
-            .getChartData2()
-            .map((langData) => langData.filter((lang) => lang.date === xDate))
-            .flat();
-
-          const minDiffValue = Math.min(
-            ...yearlyData.map((data) =>
-              data.visibility ? Math.abs(data.value - y) : MAX_RANGE
-            )
-          );
-
-          pointData = yearlyData
-            .filter((lang) => lang.visibility)
-            .find(
-              (data) =>
-                data.value >= y - minDiffValue && data.value <= y + minDiffValue
-            );
+        if (x < data.getDates().length) {
+          xDate = getTimestamp([data.getDates()[x].year]);
         }
       }
+
+      const xData = chartData
+        .getChartData()
+        .map((langData) => langData.filter((lang) => lang.date === xDate))
+        .flat();
+
+      const minDiffValue = Math.min(
+        ...xData.map((data) =>
+          data.visibility ? Math.abs(data.value - y) : MAX_RANGE
+        )
+      );
+
+      pointData = xData
+        .filter((lang) => lang.visibility)
+        .find(
+          (data) =>
+            data.value >= y - minDiffValue && data.value <= y + minDiffValue
+        );
 
       let chartPoint = Maybe.of(pointData);
       if (pointData) draw(chartPoint);
