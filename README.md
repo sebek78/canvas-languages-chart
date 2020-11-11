@@ -12,6 +12,7 @@ This simple line chart shows searching popularity and usage of programming langu
 - Two datasets:
   - searching popularity (monthly data)
   - usage by professional developers (yearly data)
+- Tooltip on hover (desktop mode only)
 
 ## Live version
 
@@ -25,4 +26,5 @@ This simple line chart shows searching popularity and usage of programming langu
 
 ## Project status
 
-In progres. My educational goal for this project is play with functional programming in JavaScript.
+**Maintaining** (code refactoring and new data only). My educational goal for this
+project is play with functional programming in JavaScript.
