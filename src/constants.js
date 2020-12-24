@@ -10,7 +10,7 @@ export const CHART_MAX_HEIGHT = 700;
 export const BOTTOM_PADDING = 50;
 export const TOP_PADDING = 20;
 export const LEFT_PADDING = 50;
-export const RIGHT_PADDING = 20;
+export const RIGHT_PADDING = 60;
 
 // legend
 export const LEGEND_X = 0;

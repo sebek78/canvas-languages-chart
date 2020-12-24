@@ -68,7 +68,7 @@ export const getMinMaxTime = (chartData, onlyYears) => {
     });
   });
 
-  const maxX = countIndex(maxTime, minTime, dt) + 1;
+  const maxX = countIndex(maxTime, minTime, dt);
 
   return { minTime, maxX, dt };
 };
