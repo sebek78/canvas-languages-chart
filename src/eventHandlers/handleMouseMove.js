@@ -68,7 +68,7 @@ export const handleMouseMove = (e, view, draw, chartData, chartData2) => {
         }
       }
 
-      const xData = chartData
+      const xData = data
         .getChartData()
         .map((langData) => langData.filter((lang) => lang.date === xDate))
         .flat();
