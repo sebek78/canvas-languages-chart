@@ -104,7 +104,7 @@ export const drawing = (viewName, chartData, duels, chartData2, chartPoint) => {
   drawChart(ctx1, getDates(), getMaxY(), getMinMaxTime());
   drawLanguageLines(ctx1, getChartData(), getMaxY(), getMinMaxTime());
   drawLegend(ctx2, getLegendData(), viewName, duels);
-  if (chartPoint.type !== "nothing")
+  if (chartPoint && chartPoint.type !== "nothing")
     drawChartPoint(ctx1, chartPoint, getMinMaxTime(), getMaxY());
 };
 

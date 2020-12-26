@@ -9,7 +9,7 @@ import { Maybe } from "../models/wrapper";
 import { getData } from "../models/common";
 
 let delayStartTime = null;
-const DELAY_TIME = 250;
+const DELAY_TIME = 100;
 const MAX_RANGE = 100;
 
 const scaleXtoIndex = (x, offsetWidth, maxX) =>
@@ -28,6 +28,12 @@ const getMaxXY = (data) => {
   const maxY = data.getMaxY();
   return { maxX, maxY };
 };
+
+const onChart = (offsetX, offsetY, offsetWidth, offsetHeight) =>
+  offsetX - LEFT_PADDING > 0 &&
+  offsetX < offsetWidth - RIGHT_PADDING &&
+  offsetY < offsetHeight - BOTTOM_PADDING &&
+  offsetY - TOP_PADDING > 0;
 
 export const handleMouseMove = (e, view, draw, chartData, chartData2) => {
   if (!delayStartTime) {
@@ -50,7 +56,7 @@ export const handleMouseMove = (e, view, draw, chartData, chartData2) => {
         view() === VIEW_NAMES.searchingValues ||
         view() === VIEW_NAMES.searchingDuels
       ) {
-        if (x < data.getDates().length) {
+        if (x >= 0 && x < data.getDates().length) {
           xDate = getTimestamp([
             data.getDates()[x].year,
             data.getDates()[x].month - 1,
@@ -62,7 +68,7 @@ export const handleMouseMove = (e, view, draw, chartData, chartData2) => {
         }
       }
 
-      const xData = chartData
+      const xData = data
         .getChartData()
         .map((langData) => langData.filter((lang) => lang.date === xDate))
         .flat();
@@ -80,7 +86,9 @@ export const handleMouseMove = (e, view, draw, chartData, chartData2) => {
             data.value >= y - minDiffValue && data.value <= y + minDiffValue
         );
 
-      let chartPoint = Maybe.of(pointData);
+      const isOnChart = onChart(offsetX, offsetY, offsetWidth, offsetHeight);
+      let chartPoint = isOnChart ? Maybe.of(pointData) : Maybe.of(null);
+
       if (pointData) draw(chartPoint);
     }
   }

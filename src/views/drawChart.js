@@ -78,7 +78,7 @@ const drawFillText = (ctx, date, x, dates, lowerText) => {
   const marginBottom = lowerText ? 10 : 28; // pixels
   ctx.fillText(
     date,
-    scaleX(ctx, x, dates.length),
+    scaleX(ctx, x, dates.length - 1),
     ctx.canvas.height - marginBottom
   );
 };
