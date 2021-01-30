@@ -88,7 +88,8 @@ const drawXValues = (ctx, dates) => {
   dates.forEach((date, x) => {
     if (date.month) {
       drawFillText(ctx, date.month, x, dates, false);
-      if (x === 0) drawFillText(ctx, date.year, x, dates, true);
+      if (x === 0 || date.month === 12)
+        drawFillText(ctx, date.year, x, dates, true);
     } else {
       drawFillText(ctx, date.year, x, dates, false);
     }
