@@ -32,15 +32,6 @@ const findMaxAndCeil = (selectedLanguages) =>
 export const findMaxValue = (chartData) =>
   R.compose(findMaxAndCeil, getVisibleLanguages, oneArray)(chartData);
 
-/* Append date to record */
-
-const appendDate = (recordData, date) =>
-  recordData.map((lang) => `${lang},${date}`);
-const appendDatesToRecordFn = (data) =>
-  data.valueOf().map(({ dataset, date }) => appendDate(dataset, date));
-export const appendDatesToRecord = (data) =>
-  Maybe.of(data).map(appendDatesToRecordFn);
-
 /* Gruop by language */
 
 const findChartPoint = (data, language) =>

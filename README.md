@@ -16,7 +16,7 @@ This simple line chart shows searching popularity and usage of programming langu
 
 ## Live version
 
-[Line chart live version](http://mybytes.pl/projects/chart/)
+[Line chart live version](https://mybytes.pl/projects/chart/)
 
 ## Technology stack
 
