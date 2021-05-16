@@ -11,6 +11,11 @@ module.exports = {
     filename: "app.bundle.js",
     path: path.resolve(__dirname, "dist"),
   },
+  devServer: {
+    contentBase: path.join(__dirname, "dist"),
+    compress: true,
+    port: 9000,
+  },
   plugins: [
     new HtmlWebpackPlugin({
       template: "./src/index.html",
@@ -50,9 +55,6 @@ module.exports = {
           "sass-loader",
           {
             loader: "postcss-loader",
-            options: {
-              plugins: () => [require("cssnano")],
-            },
           },
         ],
       },
