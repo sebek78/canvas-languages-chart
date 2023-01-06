@@ -11,7 +11,6 @@ module.exports = {
   },
   devtool: "inline-source-map",
   devServer: {
-    stats: "minimal",
     hot: true,
     port: 3000,
   },
